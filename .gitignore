@@ -19,8 +19,12 @@
 
 # Config files
 
+# Database
+/fbarhelper/fbar.db
+
 # Test files
 /tests/testdata/Transactions*.csv
+/tests/testdata/*Transactions*.xlsx
 
 # File inputs
 

@@ -1,5 +1,7 @@
 import csv
 import os
+import sqlite3
+
 import pandas
 
 
@@ -12,8 +14,14 @@ def main():
                          quoting=csv.QUOTE_NONE
                          )
     data = df.replace('"', '', regex=True)
-    print(data[['Buchungstag', 'Verwendungszweck', 'Soll', 'Haben']])
+    #print(data)
+    print(data[['Buchungstag','Wert', 'Umsatzart', 'Verwendungszweck', 'Soll', 'Haben']])
+    data.to_sql(name='transactions',
+                con=sqlite3.connect('fbar.db'),
+                if_exists='replace',
+                index=True)
 
 
 if __name__ == '__main__':
+    conn = sqlite3.connect('fbar.db')
     main()
