@@ -11,8 +11,8 @@ def translate_column_names():
 
     cursor.execute(command1)
 
-    #cursor.execute("INSERT INTO translations VALUES ('0', 'Buchungstag', 'Booking Date', "
-   #                "'Date Deutsche Bank recorded the transaction' )")
+    cursor.execute("INSERT INTO translations VALUES ('0', 'Buchungstag', 'Booking Date', "
+                   "'Date Deutsche Bank recorded the transaction' )")
     cursor.execute("INSERT INTO translations VALUES ('1', 'Wert', 'Date', "
                    "'Date Deutsche Bank recorded the transaction' )")
     cursor.execute("INSERT INTO translations VALUES ('2', 'Umsatzart', 'Transaction Type', '' )")
