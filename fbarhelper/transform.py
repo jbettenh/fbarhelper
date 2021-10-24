@@ -4,6 +4,10 @@ import sqlite3
 import pandas
 
 
+def csv_cleaner(csv_file):
+    pass
+
+
 def import_bank_csv(csv_file):
 
     df = pandas.read_csv(csv_file,
@@ -12,13 +16,20 @@ def import_bank_csv(csv_file):
                          quoting=csv.QUOTE_NONE
                          #dtype={'Soll': 'float64'}
                          )
-    data = df.replace('"', '', regex=True)
+    df.replace('"', '', regex=True)
+    df.columns = ['BOOKING_DATE', 'DATE', 'TRANSACTION_TYPE', 'AUFTRAGGABER', 'USAGE', 'IBAN', 'BIC', 'CUSTUMER_REF',
+                  'MANDATE_REF', 'CREDITOR_ID', 'FOREIGN_FEES', 'SUM', 'RECEIVER', 'NO_ORDERS', 'NO_CHECKS',
+                  'DEBIT', 'CREDIT', 'CURRENCY']
 
-    # Convert from dd.mm.yyyy to yyyy-mm-dd
-    data['Buchungstag'] = pandas.to_datetime(data['Buchungstag'], format='%d.%m.%Y').dt.date
-    data['Wert'] = pandas.to_datetime(data['Wert'], format='%d.%m.%Y').dt.date
-    data['Soll'].astype('float')
-    return data
+    """
+        
+     # Convert from dd.mm.yyyy to yyyy-mm-dd
+    data['BOOKING_DATE'] = pandas.to_datetime(data['BOOKING_DATE'], format='%d.%m.%Y').dt.date
+    data['DATE'] = pandas.to_datetime(data['DATE'], format='%d.%m.%Y').dt.date
+    #data['DEBIT'].astype('float')
+    #data['CREDIT'].astype('float')
+    """
+    return df
 
 
 def import_bank_data_to_db(bank_data):
