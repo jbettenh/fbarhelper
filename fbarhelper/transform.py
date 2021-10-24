@@ -14,12 +14,11 @@ def import_bank_csv(csv_file):
                          sep=';',
                          encoding='ISO-8859-1',
                          quoting=csv.QUOTE_NONE
-                         #dtype={'Soll': 'float64'}
                          )
     df = df.replace('"', '', regex=True)
-    df.columns = ['BOOKING_DATE', 'DATE', 'TRANSACTION_TYPE', 'AUFTRAGGABER', 'USAGE', 'IBAN', 'BIC', 'CUSTUMER_REF',
-                  'MANDATE_REF', 'CREDITOR_ID', 'FOREIGN_FEES', 'SUM', 'RECEIVER', 'NO_ORDERS', 'NO_CHECKS',
-                  'DEBIT', 'CREDIT', 'CURRENCY']
+    df.columns = ['BOOKING_DATE', 'DATE', 'TRANSACTION_TYPE', 'RECIPIENT', 'USAGE', 'IBAN', 'BIC', 'CUSTUMER_REF',
+                  'MANDATE_REF', 'CREDITOR_ID', 'FOREIGN_FEES', 'SUM', 'ALTERNATIVE_RECIPIENT', 'NO_ORDERS',
+                  'NO_CHECKS', 'DEBIT', 'CREDIT', 'CURRENCY']
         
     # Convert from dd.mm.yyyy to yyyy-mm-dd
     df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%d.%m.%Y').dt.date
