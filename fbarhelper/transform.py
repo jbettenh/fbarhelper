@@ -23,8 +23,13 @@ def import_bank_csv(csv_file):
     # Convert from dd.mm.yyyy to yyyy-mm-dd
     df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%d.%m.%Y').dt.date
     df['DATE'] = pandas.to_datetime(df['DATE'], format='%d.%m.%Y').dt.date
-    # data['DEBIT'].astype('float')
-    # data['CREDIT'].astype('float')
+    df['DEBIT'] = df['DEBIT'].str.replace('.', '')
+    df['CREDIT'] = df['CREDIT'].str.replace('.', '')
+    df['CURRENCY'] = df['CURRENCY'].str.replace(',', '')
+    df['DEBIT'] = df['DEBIT'].str.replace(',', '.')
+    df['CREDIT'] = df['CREDIT'].str.replace(',', '.')
+    df['DEBIT'] = df['DEBIT'].astype('float')
+    df['CREDIT'] = df['CREDIT'].astype('float')
 
     return df
 
