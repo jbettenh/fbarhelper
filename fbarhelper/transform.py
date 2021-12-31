@@ -1,16 +1,37 @@
 import csv
+import os
 import sqlite3
 
 import pandas
 
 
 def main():
-    db = import_bank_csv('C:/code/python3/fbarhelper/tests/testdata/Transactions_999_123456789_20210622_092547.csv')
-    import_bank_data_to_db(db)
+    # db = import_bank_csv('C:/code/python3/fbarhelper/tests/testdata/Transactions_1.csv')
+    indir = 'C:/code/python3/fbarhelper/tests/testdata/'
+
+    for root, dirs, filenames in os.walk(indir):
+        for f in filenames:
+            filename = os.path.join(root, f)
+            if '.csv' in filename:
+                csv_cleaner(filename, cleaned_file='cleaned_' +f)
+    # import_bank_data_to_db(db)
 
 
-def csv_cleaner(csv_file):
-    pass
+def csv_cleaner(raw_file, cleaned_file, header_rows=3, footer_rows=1, ):
+    """
+    Take the raw csv export from Deutsche Bank and create a csv of just transactions.
+    """
+
+    try:
+        with open(raw_file, 'r') as fin, open(cleaned_file, 'w') as fout:
+            file = csv.reader(fin, delimiter=';', lineterminator='\n')
+            writer = csv.writer(fout)
+            for i, line in enumerate(file):
+                if i > header_rows:
+                    writer.writerow(line)
+
+    except IOError as err:
+        print(f"IOError {err} in ", raw_file)
 
 
 def import_bank_csv(csv_file):
@@ -53,7 +74,7 @@ def import_bank_data_to_db(bank_data):
 def get_max():
     conn = sqlite3.connect('fbar.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM transactions;")
+    c.execute("SELECT MAX(CREDIT) FROM transactions;")
 
     print(c.fetchone())
 
