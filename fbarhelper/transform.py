@@ -13,7 +13,8 @@ def main():
         for f in filenames:
             filename = os.path.join(root, f)
             if '.csv' in filename:
-                csv_cleaner(filename, cleaned_file='cleaned_' +f)
+                csv_cleaner(filename, cleaned_file='cleaned_' + f)
+
     # import_bank_data_to_db(db)
 
 
@@ -23,11 +24,11 @@ def csv_cleaner(raw_file, cleaned_file, header_rows=3, footer_rows=1, ):
     """
 
     try:
-        with open(raw_file, 'r') as fin, open(cleaned_file, 'w') as fout:
+        with open(raw_file, 'r', encoding='ISO-8859-1') as fin, open(cleaned_file, 'w', newline='', encoding='ISO-8859-1') as fout:
             file = csv.reader(fin, delimiter=';', lineterminator='\n')
             writer = csv.writer(fout)
-            for i, line in enumerate(file):
-                if i > header_rows:
+            for current_row, line in enumerate(file):
+                if current_row > header_rows and "Account balance" not in line:
                     writer.writerow(line)
 
     except IOError as err:
