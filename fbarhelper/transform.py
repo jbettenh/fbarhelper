@@ -11,9 +11,10 @@ def main():
 
     for root, dirs, filenames in os.walk(indir):
         for f in filenames:
-            filename = os.path.join(root, f)
-            if '.csv' in filename:
-                csv_cleaner(filename, cleaned_file='cleaned_' + f)
+            raw_filename = os.path.join(root, f)
+            cleaned_filename = os.path.join(root, 'cleaned_' + f)
+            if '.csv' in raw_filename:
+                csv_cleaner(raw_filename, cleaned_filename)
 
     # import_bank_data_to_db(db)
 
