@@ -29,4 +29,5 @@
 # File inputs
 
 # File outputs
-/fbarhelper/cleaned*
+/cleaned_files/**
+

@@ -8,11 +8,12 @@ import pandas
 def main():
     # db = import_bank_csv('C:/code/python3/fbarhelper/tests/testdata/Transactions_1.csv')
     indir = 'C:/code/python3/fbarhelper/tests/testdata/'
+    outdir = 'C:/code/python3/fbarhelper/cleaned_files/'
 
     for root, dirs, filenames in os.walk(indir):
         for f in filenames:
             raw_filename = os.path.join(root, f)
-            cleaned_filename = os.path.join(root, 'cleaned_' + f)
+            cleaned_filename = os.path.join(outdir, 'cleaned_' + f)
             if '.csv' in raw_filename:
                 csv_cleaner(raw_filename, cleaned_filename)
 
