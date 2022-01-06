@@ -20,7 +20,7 @@ def main():
         for filename in filenames:
             filepath = os.path.join(root, filename)
             db = import_bank_csv(filepath)
-            # import_bank_data_to_db(db)
+            import_bank_data_to_db(db)
 
 
 def csv_cleaner(raw_file, cleaned_file, header_rows=3, footer_rows=1, ):
@@ -58,9 +58,6 @@ def import_bank_csv(csv_file):
     # Convert from dd.mm.yyyy to yyyy-mm-dd
     df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%m/%d/%Y').dt.date
     df['DATE'] = pandas.to_datetime(df['DATE'], format='%m/%d/%Y').dt.date
-    #df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], infer_datetime_format=True)
-    #df['DATE'] = pandas.to_datetime(df['DATE'], infer_datetime_format=True)
-
 
     # Switch separators from German to US
     df['DEBIT'] = df['DEBIT'].str.replace('.', '')
@@ -79,7 +76,7 @@ def import_bank_csv(csv_file):
 def import_bank_data_to_db(bank_data):
     bank_data.to_sql(name='transactions',
                      con=sqlite3.connect('fbar.db'),
-                     if_exists='replace',
+                     if_exists='append',
                      index=True)
 
 
