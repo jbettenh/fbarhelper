@@ -51,7 +51,7 @@ def import_bank_csv(csv_file):
                          quoting=csv.QUOTE_NONE
                          )
     df = df.replace('"', '', regex=True)
-    df.columns = ['BOOKING_DATE', 'DATE', 'TRANSACTION_TYPE', 'RECIPIENT', 'USAGE', 'IBAN', 'BIC', 'CUSTUMER_REF',
+    df.columns = ['BOOKING_DATE', 'DATE', 'TRANSACTION_TYPE', 'RECIPIENT', 'USAGE', 'IBAN', 'BIC', 'CUSTOMER_REF',
                   'MANDATE_REF', 'CREDITOR_ID', 'FOREIGN_FEES', 'SUM', 'ALTERNATIVE_RECIPIENT', 'NO_ORDERS',
                   'NO_CHECKS', 'DEBIT', 'CREDIT', 'CURRENCY']
         
@@ -77,20 +77,20 @@ def import_bank_data_to_db(bank_data):
     bank_data.to_sql(name='transactions',
                      con=sqlite3.connect('fbar.db'),
                      if_exists='append',
-                     index=True)
+                     index=True,
+                     index_label='ID')
 
 
-def get_max():
+def get_max_credit():
     conn = sqlite3.connect('fbar.db')
-    c = conn.cursor()
-    c.execute("SELECT MAX(CREDIT) FROM transactions;")
 
-    print(c.fetchone())
-
-    conn.close()
+    with conn:
+        c = conn.cursor()
+        c.execute("SELECT MAX(CREDIT) FROM transactions;")
+        print(c.fetchone())
 
 
 if __name__ == '__main__':
     main()
-    get_max()
+    get_max_credit()
 
