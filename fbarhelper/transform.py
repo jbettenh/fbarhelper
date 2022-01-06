@@ -6,7 +6,6 @@ import pandas
 
 
 def main():
-    # db = import_bank_csv('C:/code/python3/fbarhelper/tests/testdata/Transactions_1.csv')
     indir = 'C:/code/python3/fbarhelper/tests/testdata/'
     outdir = 'C:/code/python3/fbarhelper/cleaned_files/'
 
@@ -17,7 +16,11 @@ def main():
             if '.csv' in raw_filename:
                 csv_cleaner(raw_filename, cleaned_filename)
 
-    # import_bank_data_to_db(db)
+    for root, dirs, filenames in os.walk(outdir):
+        for filename in filenames:
+            filepath = os.path.join(root, filename)
+            db = import_bank_csv(filepath)
+            # import_bank_data_to_db(db)
 
 
 def csv_cleaner(raw_file, cleaned_file, header_rows=3, footer_rows=1, ):
@@ -26,9 +29,12 @@ def csv_cleaner(raw_file, cleaned_file, header_rows=3, footer_rows=1, ):
     """
 
     try:
-        with open(raw_file, 'r', encoding='ISO-8859-1') as fin, open(cleaned_file, 'w', newline='', encoding='ISO-8859-1') as fout:
+        with open(raw_file, 'r', encoding='ISO-8859-1') as fin, \
+                open(cleaned_file, 'w', encoding='ISO-8859-1', newline='') as fout:
+
             file = csv.reader(fin, delimiter=';', lineterminator='\n')
-            writer = csv.writer(fout)
+            writer = csv.writer(fout, delimiter=';')
+
             for current_row, line in enumerate(file):
                 if current_row > header_rows and "Account balance" not in line:
                     writer.writerow(line)
@@ -50,8 +56,11 @@ def import_bank_csv(csv_file):
                   'NO_CHECKS', 'DEBIT', 'CREDIT', 'CURRENCY']
         
     # Convert from dd.mm.yyyy to yyyy-mm-dd
-    df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%d.%m.%Y').dt.date
-    df['DATE'] = pandas.to_datetime(df['DATE'], format='%d.%m.%Y').dt.date
+    df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%m/%d/%Y').dt.date
+    df['DATE'] = pandas.to_datetime(df['DATE'], format='%m/%d/%Y').dt.date
+    #df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], infer_datetime_format=True)
+    #df['DATE'] = pandas.to_datetime(df['DATE'], infer_datetime_format=True)
+
 
     # Switch separators from German to US
     df['DEBIT'] = df['DEBIT'].str.replace('.', '')
