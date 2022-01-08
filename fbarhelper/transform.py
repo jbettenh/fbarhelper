@@ -3,11 +3,13 @@ import os
 import sqlite3
 
 import pandas
+import pandas as pd
 
 
 def main():
     indir = 'C:/code/python3/fbarhelper/tests/testdata/'
     outdir = 'C:/code/python3/fbarhelper/cleaned_files/'
+    li = []
 
     for root, dirs, filenames in os.walk(indir):
         for f in filenames:
@@ -19,15 +21,18 @@ def main():
     for root, dirs, filenames in os.walk(outdir):
         for filename in filenames:
             filepath = os.path.join(root, filename)
-            db = import_bank_csv(filepath)
-            import_bank_data_to_db(db)
+            df = import_bank_csv(filepath)
+            li.append(df)
+
+    frame = pd.concat(li, axis=0, ignore_index=True)
+    import_bank_data_to_db(frame)
 
 
 def csv_cleaner(raw_file, cleaned_file, header_rows=3, footer_rows=1, ):
     """
     Take the raw csv export from Deutsche Bank and create a csv of just transactions.
     """
-
+    print(f'Cleaning CSV files in {raw_file} .....')
     try:
         with open(raw_file, 'r', encoding='ISO-8859-1') as fin, \
                 open(cleaned_file, 'w', encoding='ISO-8859-1', newline='') as fout:
@@ -45,6 +50,7 @@ def csv_cleaner(raw_file, cleaned_file, header_rows=3, footer_rows=1, ):
 
 def import_bank_csv(csv_file):
 
+    print(f'Importing bank csv {csv_file} .....')
     df = pandas.read_csv(csv_file,
                          sep=';',
                          encoding='ISO-8859-1',
@@ -55,26 +61,15 @@ def import_bank_csv(csv_file):
                   'MANDATE_REF', 'CREDITOR_ID', 'FOREIGN_FEES', 'SUM', 'ALTERNATIVE_RECIPIENT', 'NO_ORDERS',
                   'NO_CHECKS', 'DEBIT', 'CREDIT', 'CURRENCY']
         
-    # Convert from dd.mm.yyyy to yyyy-mm-dd
     df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%m/%d/%Y').dt.date
     df['DATE'] = pandas.to_datetime(df['DATE'], format='%m/%d/%Y').dt.date
-
-    # Switch separators from German to US
-    df['DEBIT'] = df['DEBIT'].str.replace('.', '')
-    df['CREDIT'] = df['CREDIT'].str.replace('.', '')
-    df['CURRENCY'] = df['CURRENCY'].str.replace(',', '')
-    df['DEBIT'] = df['DEBIT'].str.replace(',', '.')
-    df['CREDIT'] = df['CREDIT'].str.replace(',', '.')
-
-    # Make values floats
-    df['DEBIT'] = df['DEBIT'].astype('float')
-    df['CREDIT'] = df['CREDIT'].astype('float')
 
     return df
 
 
 def import_bank_data_to_db(bank_data):
-    bank_data.to_sql(name='transactions',
+    print('Adding to database .....')
+    bank_data.to_sql(name='TRANSACTIONS',
                      con=sqlite3.connect('fbar.db'),
                      if_exists='append',
                      index=True,
@@ -86,11 +81,21 @@ def get_max_credit():
 
     with conn:
         c = conn.cursor()
-        c.execute("SELECT MAX(CREDIT) FROM transactions;")
-        print(c.fetchone())
+        c.execute("SELECT MAX(CREDIT), BOOKING_DATE FROM TRANSACTIONS;")
+        print(f'Largest credit was: {c.fetchone()}')
+
+
+def get_max_debit():
+    conn = sqlite3.connect('fbar.db')
+
+    with conn:
+        c = conn.cursor()
+        c.execute("SELECT MIN(DEBIT), BOOKING_DATE FROM TRANSACTIONS;")
+        print(f'Largest debit was: {c.fetchone()}')
 
 
 if __name__ == '__main__':
     main()
     get_max_credit()
+    get_max_debit()
 
