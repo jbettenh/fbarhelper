@@ -6,9 +6,8 @@ import pandas
 import pandas as pd
 
 
-def main():
-    indir = 'C:/code/python3/fbarhelper/tests/testdata/'
-    outdir = 'C:/code/python3/fbarhelper/cleaned_files/'
+def main(indir, outdir):
+
     li = []
 
     for root, dirs, filenames in os.walk(indir):
@@ -95,7 +94,7 @@ def get_max_debit():
 
 
 if __name__ == '__main__':
-    main()
+    main('C:/code/python3/fbarhelper/tests/testdata/', 'C:/code/python3/fbarhelper/cleaned_files/')
     get_max_credit()
     get_max_debit()
 
