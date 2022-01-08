@@ -29,3 +29,5 @@
 # File inputs
 
 # File outputs
+/cleaned_files/**
+
