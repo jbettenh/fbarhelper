@@ -24,6 +24,14 @@ def insert_tables():
                    MANDATE_REF TEXT,CREDITOR_ID TEXT, FOREIGN_FEES TEXT, SUM REAL, ALTERNATIVE_RECIPIENT TEXT, 
                    NO_ORDERS TEXT, NO_CHECKS TEXT, DEBIT REAL, CREDIT REAL, CURRENCY TEXT)""")
 
+        cursor.execute("""CREATE TABLE IF NOT EXISTS
+                           ACCOUNTS(ID INTEGER PRIMARY KEY not null on conflict ignore, NAME TEXT, 
+                           DATE_OPENED DATE, ACCOUNT_TYPE TEXT
+                           CURRENT_BALANCE REAL)""")
+
+        cursor.execute("""CREATE TABLE IF NOT EXISTS
+                                   BANKS(ID INTEGER PRIMARY KEY not null on conflict ignore, NAME TEXT)""")
+
 
 def translate_column_names():
     conn = sqlite3.connect('fbar.db')
