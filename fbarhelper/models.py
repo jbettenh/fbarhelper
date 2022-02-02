@@ -8,6 +8,8 @@ def drop_tables():
         cursor = conn.cursor()
         cursor.execute("DROP TABLE TRANSLATIONS")
         cursor.execute("DROP TABLE TRANSACTIONS")
+        cursor.execute("DROP TABLE ACCOUNTS")
+        cursor.execute("DROP TABLE BANKS")
 
 
 def insert_tables():
@@ -25,12 +27,13 @@ def insert_tables():
                    NO_ORDERS TEXT, NO_CHECKS TEXT, DEBIT REAL, CREDIT REAL, CURRENCY TEXT)""")
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS
-                           ACCOUNTS(ID INTEGER PRIMARY KEY not null on conflict ignore, NAME TEXT, 
-                           DATE_OPENED DATE, ACCOUNT_TYPE TEXT
+                           ACCOUNTS(ID INTEGER PRIMARY KEY not null on conflict ignore, NAME TEXT, OWNER_FIRST TEXT,
+                           OWNER_LAST TEXT, ACCOUNT_NO TEXT, IBAN TEXT, BIC TEXT, DATE_OPENED DATE, ACCOUNT_TYPE TEXT, 
                            CURRENT_BALANCE REAL)""")
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS
-                                   BANKS(ID INTEGER PRIMARY KEY not null on conflict ignore, NAME TEXT)""")
+                                   BANKS(ID INTEGER PRIMARY KEY not null on conflict ignore, NAME TEXT, 
+                                   ADDRESS TEXT)""")
 
 
 def translate_column_names():
