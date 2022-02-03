@@ -53,7 +53,8 @@ def import_bank_csv(csv_file):
     df = pandas.read_csv(csv_file,
                          sep=';',
                          encoding='ISO-8859-1',
-                         quoting=csv.QUOTE_NONE
+                         quoting=csv.QUOTE_NONE,
+                         index_col=None
                          )
     df = df.replace('"', '', regex=True)
     df.columns = ['BOOKING_DATE', 'DATE', 'TRANSACTION_TYPE', 'RECIPIENT', 'USAGE', 'IBAN', 'BIC', 'CUSTOMER_REF',
@@ -62,7 +63,12 @@ def import_bank_csv(csv_file):
         
     df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%m/%d/%Y').dt.date
     df['DATE'] = pandas.to_datetime(df['DATE'], format='%m/%d/%Y').dt.date
+    df['CREDIT'] = pandas.to_numeric(df['CREDIT'].str.replace(',', ''), downcast='float')
+    df['DEBIT'] = pandas.to_numeric(df['DEBIT'].str.replace(',', ''), downcast='float')
 
+    df['AMOUNT'] = df['CREDIT'].fillna(0) + df['DEBIT'].fillna(0)
+
+    print(df)
     return df
 
 
