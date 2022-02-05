@@ -63,10 +63,14 @@ def import_bank_csv(csv_file):
         
     df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%m/%d/%Y').dt.date
     df['DATE'] = pandas.to_datetime(df['DATE'], format='%m/%d/%Y').dt.date
-    df['CREDIT'] = pandas.to_numeric(df['CREDIT'].str.replace(',', ''), downcast='float')
-    df['DEBIT'] = pandas.to_numeric(df['DEBIT'].str.replace(',', ''), downcast='float')
+    df['CREDIT'] = pandas.to_numeric(df['CREDIT'].replace('[^0-9\.-]', '', regex=True)).fillna(0).astype('float')
+    df['DEBIT'] = pandas.to_numeric(df['DEBIT'].replace('[^0-9\.-]', '', regex=True)).fillna(0).astype('float')
 
-    df['AMOUNT'] = df['CREDIT'].fillna(0) + df['DEBIT'].fillna(0)
+    df['CREDIT'] = df['CREDIT']*100
+    df['CREDIT'] = df['CREDIT'].astype(int)
+    df['DEBIT'] = df['DEBIT'] * 100
+    df['DEBIT'] = df['DEBIT'].astype(int)
+    df['AMOUNT'] = df['CREDIT'] + df['DEBIT']
 
     print(df)
     return df
