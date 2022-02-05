@@ -1,4 +1,5 @@
 import csv
+import locale
 import os
 import sqlite3
 
@@ -63,16 +64,14 @@ def import_bank_csv(csv_file):
         
     df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%m/%d/%Y').dt.date
     df['DATE'] = pandas.to_datetime(df['DATE'], format='%m/%d/%Y').dt.date
-    df['CREDIT'] = pandas.to_numeric(df['CREDIT'].replace('[^0-9\.-]', '', regex=True)).fillna(0).astype('float')
-    df['DEBIT'] = pandas.to_numeric(df['DEBIT'].replace('[^0-9\.-]', '', regex=True)).fillna(0).astype('float')
+    df['CREDIT'] = pandas.to_numeric(df['CREDIT'].replace('[^0-9\.-]', '', regex=True)).fillna(0)
+    df['DEBIT'] = pandas.to_numeric(df['DEBIT'].replace('[^0-9\.-]', '', regex=True)).fillna(0)
 
-    df['CREDIT'] = df['CREDIT']*100
-    df['CREDIT'] = df['CREDIT'].astype(int)
-    df['DEBIT'] = df['DEBIT'] * 100
-    df['DEBIT'] = df['DEBIT'].astype(int)
+    df['CREDIT'] = (df['CREDIT'].astype('float') * 100).astype(int)
+    df['DEBIT'] = (df['DEBIT'].astype('float') * 100).astype(int)
+
     df['AMOUNT'] = df['CREDIT'] + df['DEBIT']
 
-    print(df)
     return df
 
 
@@ -85,26 +84,7 @@ def import_bank_data_to_db(bank_data):
                      index_label='ID')
 
 
-def get_max_credit():
-    conn = sqlite3.connect('fbar.db')
-
-    with conn:
-        c = conn.cursor()
-        c.execute("SELECT MAX(CREDIT), BOOKING_DATE FROM TRANSACTIONS;")
-        print(f'Largest credit was: {c.fetchone()}')
-
-
-def get_max_debit():
-    conn = sqlite3.connect('fbar.db')
-
-    with conn:
-        c = conn.cursor()
-        c.execute("SELECT MIN(DEBIT), BOOKING_DATE FROM TRANSACTIONS;")
-        print(f'Largest debit was: {c.fetchone()}')
-
-
 if __name__ == '__main__':
+
     main('C:/code/python3/fbarhelper/tests/testdata/', 'C:/code/python3/fbarhelper/cleaned_files/')
-    get_max_credit()
-    get_max_debit()
 
