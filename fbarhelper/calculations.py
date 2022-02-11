@@ -8,7 +8,12 @@ def get_max_credit():
     with conn:
         c = conn.cursor()
         c.execute("SELECT MAX(AMOUNT), BOOKING_DATE FROM TRANSACTIONS;")
-        print(f'Largest credit was: {c.fetchone()}')
+        data = c.fetchone()
+
+        if data is not None:
+            balance, date = data
+            balance = locale.currency(balance/100)
+            return balance, date
 
 
 def get_max_debit():
@@ -17,12 +22,15 @@ def get_max_debit():
     with conn:
         c = conn.cursor()
         c.execute("SELECT MIN(AMOUNT), BOOKING_DATE FROM TRANSACTIONS;")
-        row = c.fetchone()
-        value = locale.currency(row['MIN(AMOUNT)'], grouping=True)
-        print(f'Largest debit was: {value}')
+        data = c.fetchone()
+
+        if data is not None:
+            balance, date = data
+            balance = locale.currency(balance / 100)
+            return balance, date
 
 
 if __name__ == '__main__':
-    locale.setlocale(locale.LC_ALL, '')
-    get_max_credit()
-    get_max_debit()
+    locale.setlocale(locale.LC_ALL, 'de_DE')
+    print(f'Largest credit was: {get_max_credit()[0]} on {get_max_credit()[1]}')
+    print(f'Largest debit was: {get_max_debit()[0]} on {get_max_debit()[1]}')
