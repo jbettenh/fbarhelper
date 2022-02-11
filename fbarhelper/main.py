@@ -15,7 +15,7 @@ def main():
         4: 'Show max debit.',
         5: 'Exit',
     }
-    while(True):
+    while True:
         print_menu(menu_options)
         selection = ''
         output = ''

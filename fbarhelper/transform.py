@@ -1,8 +1,8 @@
 import csv
-import locale
 import os
 import sqlite3
 
+import numpy as np
 import pandas
 import pandas as pd
 
@@ -71,6 +71,7 @@ def import_bank_csv(csv_file):
     df['DEBIT'] = (df['DEBIT'].astype('float') * 100).astype(int)
 
     df['AMOUNT'] = df['CREDIT'] + df['DEBIT']
+    df['BALANCE'] = np.NAN
 
     return df
 

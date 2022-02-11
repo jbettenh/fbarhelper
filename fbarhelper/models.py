@@ -24,12 +24,13 @@ def insert_tables():
                    TRANSACTIONS(ID INTEGER PRIMARY KEY not null on conflict ignore, BOOKING_DATE DATE, DATE DATE, 
                    TRANSACTION_TYPE TEXT, RECIPIENT TEXT, USAGE TEXT, IBAN TEXT, BIC TEXT, CUSTOMER_REF TEXT, 
                    MANDATE_REF TEXT,CREDITOR_ID TEXT, FOREIGN_FEES TEXT, SUM REAL, ALTERNATIVE_RECIPIENT TEXT, 
-                   NO_ORDERS TEXT, NO_CHECKS TEXT, DEBIT INTEGER, CREDIT INTEGER, AMOUNT INTEGER, CURRENCY TEXT)""")
+                   NO_ORDERS TEXT, NO_CHECKS TEXT, DEBIT INTEGER, CREDIT INTEGER, AMOUNT INTEGER, BALANCE INTEGER,
+                   CURRENCY TEXT)""")
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS
                            ACCOUNTS(ID INTEGER PRIMARY KEY not null on conflict ignore, NAME TEXT, OWNER_FIRST TEXT,
                            OWNER_LAST TEXT, ACCOUNT_NO TEXT, IBAN TEXT, BIC TEXT, DATE_OPENED DATE, ACCOUNT_TYPE TEXT, 
-                           CURRENT_BALANCE REAL)""")
+                           CURRENT_BALANCE INTEGER)""")
 
         cursor.execute("""CREATE TABLE IF NOT EXISTS
                                    BANKS(ID INTEGER PRIMARY KEY not null on conflict ignore, NAME TEXT, 
