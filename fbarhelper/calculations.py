@@ -3,6 +3,7 @@ import sqlite3
 
 
 def get_max_credit():
+    locale.setlocale(locale.LC_ALL, 'de_DE')
     conn = sqlite3.connect('fbar.db')
 
     with conn:
@@ -17,6 +18,7 @@ def get_max_credit():
 
 
 def get_max_debit():
+    locale.setlocale(locale.LC_ALL, 'de_DE')
     conn = sqlite3.connect('fbar.db')
 
     with conn:
@@ -31,6 +33,5 @@ def get_max_debit():
 
 
 if __name__ == '__main__':
-    locale.setlocale(locale.LC_ALL, 'de_DE')
     print(f'Largest credit was: {get_max_credit()[0]} on {get_max_credit()[1]}')
     print(f'Largest debit was: {get_max_debit()[0]} on {get_max_debit()[1]}')
