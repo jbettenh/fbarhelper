@@ -68,3 +68,4 @@ if __name__ == '__main__':
     print('Tables inserted.')
     translate_column_names()
     print('Inserted header translations.')
+

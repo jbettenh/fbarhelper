@@ -12,9 +12,9 @@ def get_max_credit():
         data = c.fetchone()
 
         if data is not None:
-            balance, date = data
-            balance = locale.currency(balance/100)
-            return balance, date
+            amount, date = data
+            amount = locale.currency(amount/100)
+            return amount, date
 
 
 def get_max_debit():
@@ -27,6 +27,22 @@ def get_max_debit():
         data = c.fetchone()
 
         if data is not None:
+            amount, date = data
+            amount = locale.currency(amount / 100)
+            return amount, date
+
+
+def get_max_balance():
+    locale.setlocale(locale.LC_ALL, 'de_DE')
+    conn = sqlite3.connect('fbar.db')
+
+    with conn:
+        c = conn.cursor()
+        c.execute("SELECT MAX(BALANCE), BOOKING_DATE FROM TRANSACTIONS")
+        data = c.fetchone()
+
+        if data is not None:
+
             balance, date = data
             balance = locale.currency(balance / 100)
             return balance, date
@@ -35,3 +51,5 @@ def get_max_debit():
 if __name__ == '__main__':
     print(f'Largest credit was: {get_max_credit()[0]} on {get_max_credit()[1]}')
     print(f'Largest debit was: {get_max_debit()[0]} on {get_max_debit()[1]}')
+    print(f'Largest balance was: {get_max_balance()[0]} on {get_max_balance()[1]}')
+

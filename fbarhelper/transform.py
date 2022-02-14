@@ -62,18 +62,28 @@ def import_bank_csv(csv_file):
                   'MANDATE_REF', 'CREDITOR_ID', 'FOREIGN_FEES', 'SUM', 'ALTERNATIVE_RECIPIENT', 'NO_ORDERS',
                   'NO_CHECKS', 'DEBIT', 'CREDIT', 'CURRENCY']
         
-    df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%m/%d/%Y').dt.date
-    df['DATE'] = pandas.to_datetime(df['DATE'], format='%m/%d/%Y').dt.date
-    df['CREDIT'] = pandas.to_numeric(df['CREDIT'].replace('[^0-9\.-]', '', regex=True)).fillna(0)
+    df['BOOKING_DATE'] = pandas.to_datetime(df['BOOKING_DATE'], format='%d/%m/%Y').dt.date
+    df['DATE'] = pandas.to_datetime(df['DATE'], format='%d/%m/%Y').dt.date
+    df['CREDIT'] = pandas.to_numeric(df['CREDIT'].replace('[^0-9\-]', '', regex=True)).fillna(0)
     df['DEBIT'] = pandas.to_numeric(df['DEBIT'].replace('[^0-9\.-]', '', regex=True)).fillna(0)
 
-    df['CREDIT'] = (df['CREDIT'].astype('float') * 100).astype(int)
-    df['DEBIT'] = (df['DEBIT'].astype('float') * 100).astype(int)
+    df['CREDIT'] = (df['CREDIT'].astype('float')).astype(int)
+    df['DEBIT'] = (df['DEBIT'].astype('float')).astype(int)
 
     df['AMOUNT'] = df['CREDIT'] + df['DEBIT']
     df['BALANCE'] = np.NAN
 
     return df
+
+
+def add_day_balance():
+    conn = sqlite3.connect('fbar.db')
+
+    with conn:
+        conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
+                     "VALUES ('2021-01-01', '2021-01-01', 100000, 'EUR')")
+        conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
+                     "VALUES ('2021-02-01', '2021-02-01', 173506, 'EUR')")
 
 
 def import_bank_data_to_db(bank_data):
@@ -88,4 +98,5 @@ def import_bank_data_to_db(bank_data):
 if __name__ == '__main__':
 
     main('C:/code/python3/fbarhelper/tests/testdata/', 'C:/code/python3/fbarhelper/cleaned_files/')
-
+    add_day_balance()
+    print('Inserted balances')
