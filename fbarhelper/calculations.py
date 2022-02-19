@@ -1,5 +1,21 @@
 import locale
 import sqlite3
+from datetime import datetime
+
+
+def input_balance(date: datetime, amount: float):
+    # Add more validation
+
+    conn = sqlite3.connect('fbar.db')
+    with conn:
+        conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
+                     "VALUES ('2021-01-01', '2021-01-01', 100000, 'EUR')")
+        # response sucessful
+    return "Successful"
+        
+
+def calc_daily_balance():
+    pass
 
 
 def get_max_credit():
@@ -42,7 +58,6 @@ def get_max_balance():
         data = c.fetchone()
 
         if data is not None:
-
             balance, date = data
             balance = locale.currency(balance / 100)
             return balance, date

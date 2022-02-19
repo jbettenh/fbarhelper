@@ -27,7 +27,9 @@ def main():
         if selection == 1:
             print('1')
         elif selection == 2:
-            print('2')
+            balance_date = input('Please input the date of the known balance. (Format YYYY-MM-DD')
+            balance_amount = input('Please input the amount of the known balance. (Format 100.00')
+            print(calc.calc_daily_balance(balance_date, balance_amount))
         elif selection == 3:
             output = calc.get_max_credit()
         elif selection == 4:
