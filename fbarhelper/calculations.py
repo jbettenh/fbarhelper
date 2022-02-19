@@ -1,17 +1,19 @@
 import locale
 import sqlite3
-from datetime import datetime
 
 
-def input_balance(date: datetime, amount: float):
+def input_balance(date, amount):
+    output = ''
     # Add more validation
+    amount = float(amount.replace('.', ''))
 
     conn = sqlite3.connect('fbar.db')
     with conn:
         conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
-                     "VALUES ('2021-01-01', '2021-01-01', 100000, 'EUR')")
-        # response sucessful
-    return "Successful"
+                     "VALUES (?, ?, ?, 'EUR')", (date, date, amount))
+
+        output = 'Successful'
+    return output
         
 
 def calc_daily_balance():
