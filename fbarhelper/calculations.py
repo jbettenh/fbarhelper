@@ -3,9 +3,10 @@ import sqlite3
 
 
 def input_balance(date, amount):
-    output = ''
+    locale.setlocale(locale.LC_ALL, 'en_US')
+
     # Add more validation
-    amount = float(amount.replace('.', ''))
+    amount = (locale.atof(amount))*100
 
     conn = sqlite3.connect('fbar.db')
     with conn:

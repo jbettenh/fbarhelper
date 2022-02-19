@@ -29,7 +29,7 @@ def main():
             print('1')
         elif selection == 2:
             balance_date = input('Please input the date of the known balance. (Format YYYY-MM-DD)\n')
-            balance_amount = input('Please input the amount of the known balance. (Format 100.00)\n')
+            balance_amount = input('Please input the amount of the known balance. (Format 1,000.00)\n')
             print(calc.input_balance(balance_date, balance_amount))
         elif selection == 3:
             output = calc.get_max_credit()
