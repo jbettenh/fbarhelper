@@ -1,20 +1,40 @@
 import locale
 import sqlite3
+import datetime
 
 
-def input_balance(date, amount):
+def input_balance(booking_date, date, amount):
     locale.setlocale(locale.LC_ALL, 'en_US')
-
+    date_format = '%Y-%m-%d'
     # Add more validation
-    amount = (locale.atof(amount))*100
+    try:
+        datetime.datetime.strptime(booking_date, date_format)
+        datetime.datetime.strptime(date, date_format)
+    except ValueError:
+        print('This is the incorrect date format. It should be YYYY-MM-DD')
+        return False
+
+    except:
+        print('Unknown error with date entered.')
+        return False
+
+
+    try:
+        amount = (locale.atof(amount))*100
+    except ValueError:
+        print('Float error')
+        return False
+    except:
+        print('Unknown error with amount entered.')
+        return False
 
     conn = sqlite3.connect('fbar.db')
+
     with conn:
         conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
-                     "VALUES (?, ?, ?, 'EUR')", (date, date, amount))
-
-        output = 'Successful'
-    return output
+                     "VALUES (?, ?, ?, 'EUR')", (booking_date, date, amount))
+        print('Successful')
+    return True
         
 
 def calc_daily_balance():

@@ -8,6 +8,7 @@ def print_menu(menu):
 
 
 def main():
+    stored = False
     menu_options = {
         1: 'Import CSV files.',
         2: 'Enter a balance.',
@@ -28,9 +29,10 @@ def main():
         if selection == 1:
             print('1')
         elif selection == 2:
-            balance_date = input('Please input the date of the known balance. (Format YYYY-MM-DD)\n')
-            balance_amount = input('Please input the amount of the known balance. (Format 1,000.00)\n')
-            print(calc.input_balance(balance_date, balance_amount))
+            while stored is not True:
+                balance_date = input('Please input the date of the known balance. (Format YYYY-MM-DD)\n')
+                balance_amount = input('Please input the amount of the known balance. (Format 1,000.00)\n')
+                stored = calc.input_balance(balance_date, balance_date, balance_amount)
         elif selection == 3:
             output = calc.get_max_credit()
         elif selection == 4:
