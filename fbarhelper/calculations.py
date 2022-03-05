@@ -1,24 +1,61 @@
 import locale
 import sqlite3
+import datetime
+import pandas as pd
 
 
-def input_balance(date, amount):
+def input_balance(booking_date, date, amount):
     locale.setlocale(locale.LC_ALL, 'en_US')
-
+    date_format = '%Y-%m-%d'
     # Add more validation
-    amount = (locale.atof(amount))*100
+    try:
+        datetime.datetime.strptime(booking_date, date_format)
+        datetime.datetime.strptime(date, date_format)
+    except ValueError:
+        print('This is the incorrect date format. It should be YYYY-MM-DD')
+        return False
+    except:
+        print('Unknown error with date entered.')
+        return False
+
+    try:
+        amount = (locale.atof(amount))*100
+    except ValueError:
+        print('This is the incorrect amount format. It should be 1,000.00')
+        return False
+    except FloatingPointError:
+        print('Float operation error')
+        return False
+    except:
+        print('Unknown error with amount entered.')
+        return False
 
     conn = sqlite3.connect('fbar.db')
-    with conn:
-        conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
-                     "VALUES (?, ?, ?, 'EUR')", (date, date, amount))
 
-        output = 'Successful'
-    return output
+    with conn:
+        try:
+            conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
+                         "VALUES (?, ?, ?, 'EUR')", (booking_date, date, amount))
+            print('Successfully inserted row into DB.')
+            return True
+
+        except:
+            print('Failed to insert row into DB.')
+            return False
         
 
 def calc_daily_balance():
-    pass
+    conn = sqlite3.connect('fbar.db')
+
+    try:
+        df = pd.read_sql_query("SELECT * FROM TRANSACTIONS ORDER BY BOOKING_DATE;", conn)
+        df['BALANCE'] = df['BALANCE'].combine_first(df['AMOUNT'])
+        df['BALANCE'] = df['BALANCE'].cumsum()
+        df.to_sql('BALANCE', conn, if_exists="append")
+        return True
+
+    except:
+        return False
 
 
 def get_max_credit():
@@ -67,7 +104,8 @@ def get_max_balance():
 
 
 if __name__ == '__main__':
-    print(f'Largest credit was: {get_max_credit()[0]} on {get_max_credit()[1]}')
-    print(f'Largest debit was: {get_max_debit()[0]} on {get_max_debit()[1]}')
-    print(f'Largest balance was: {get_max_balance()[0]} on {get_max_balance()[1]}')
+    print(f'The largest credit was: {get_max_credit()[0]} on {get_max_credit()[1]}')
+    print(f'The largest debit was: {get_max_debit()[0]} on {get_max_debit()[1]}')
+    print(f'The largest balance was: {get_max_balance()[0]} on {get_max_balance()[1]}')
+
 
