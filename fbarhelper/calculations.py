@@ -38,7 +38,7 @@ def input_balance(booking_date, date, amount):
                          "VALUES (?, ?, ?, 'EUR')", (booking_date, date, amount))
             print('Successfully inserted row into DB.')
             return True
-        
+
         except:
             print('Failed to insert row into DB.')
             return False
@@ -47,10 +47,15 @@ def input_balance(booking_date, date, amount):
 def calc_daily_balance():
     conn = sqlite3.connect('fbar.db')
 
-    df = pd.read_sql_query("SELECT * FROM TRANSACTIONS ORDER BY BOOKING_DATE;", conn)
-    df['BALANCE'] = df['BALANCE'].combine_first(df['AMOUNT'])
-    df['BALANCE'] = df['BALANCE'].cumsum()
-    df.to_sql('BALANCE', conn, if_exists="append")
+    try:
+        df = pd.read_sql_query("SELECT * FROM TRANSACTIONS ORDER BY BOOKING_DATE;", conn)
+        df['BALANCE'] = df['BALANCE'].combine_first(df['AMOUNT'])
+        df['BALANCE'] = df['BALANCE'].cumsum()
+        df.to_sql('BALANCE', conn, if_exists="append")
+        return True
+
+    except:
+        return False
 
 
 def get_max_credit():
@@ -99,8 +104,8 @@ def get_max_balance():
 
 
 if __name__ == '__main__':
-    print(f'Largest credit was: {get_max_credit()[0]} on {get_max_credit()[1]}')
-    print(f'Largest debit was: {get_max_debit()[0]} on {get_max_debit()[1]}')
-    print(f'Largest balance was: {get_max_balance()[0]} on {get_max_balance()[1]}')
-    print(calc_daily_balance())
+    print(f'The largest credit was: {get_max_credit()[0]} on {get_max_credit()[1]}')
+    print(f'The largest debit was: {get_max_debit()[0]} on {get_max_debit()[1]}')
+    print(f'The largest balance was: {get_max_balance()[0]} on {get_max_balance()[1]}')
+
 
