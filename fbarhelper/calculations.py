@@ -1,6 +1,7 @@
 import locale
 import sqlite3
 import datetime
+import pandas as pd
 
 
 def input_balance(booking_date, date, amount):
@@ -13,16 +14,17 @@ def input_balance(booking_date, date, amount):
     except ValueError:
         print('This is the incorrect date format. It should be YYYY-MM-DD')
         return False
-
     except:
         print('Unknown error with date entered.')
         return False
 
-
     try:
         amount = (locale.atof(amount))*100
     except ValueError:
-        print('Float error')
+        print('This is the incorrect amount format. It should be 1,000.00')
+        return False
+    except FloatingPointError:
+        print('Float operation error')
         return False
     except:
         print('Unknown error with amount entered.')
@@ -31,14 +33,26 @@ def input_balance(booking_date, date, amount):
     conn = sqlite3.connect('fbar.db')
 
     with conn:
-        conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
+        try:
+            conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
                      "VALUES (?, ?, ?, 'EUR')", (booking_date, date, amount))
-        print('Successful')
-    return True
+            print('Successfully inserted row into DB.')
+            return True
+        except:
+            print('Failed to insert row into DB.')
+            return False
         
 
 def calc_daily_balance():
-    pass
+    conn = sqlite3.connect('fbar.db')
+
+    df = pd.read_sql_query("SELECT * FROM TRANSACTIONS ORDER BY BOOKING_DATE;", conn)
+    df['BALANCE'] = df['AMOUNT']
+    df.loc[0, 'BALANCE'] = 100000
+    df.loc[7, 'BALANCE'] = 173506
+    df['BALANCE'] = df['BALANCE'].cumsum()
+    print(df)
+    df.to_sql('BALANCE', conn, if_exists="append")
 
 
 def get_max_credit():
@@ -90,4 +104,5 @@ if __name__ == '__main__':
     print(f'Largest credit was: {get_max_credit()[0]} on {get_max_credit()[1]}')
     print(f'Largest debit was: {get_max_debit()[0]} on {get_max_debit()[1]}')
     print(f'Largest balance was: {get_max_balance()[0]} on {get_max_balance()[1]}')
+    print(calc_daily_balance())
 
