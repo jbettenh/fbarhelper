@@ -35,9 +35,10 @@ def input_balance(booking_date, date, amount):
     with conn:
         try:
             conn.execute("INSERT INTO TRANSACTIONS (BOOKING_DATE, DATE, BALANCE, CURRENCY) "
-                     "VALUES (?, ?, ?, 'EUR')", (booking_date, date, amount))
+                         "VALUES (?, ?, ?, 'EUR')", (booking_date, date, amount))
             print('Successfully inserted row into DB.')
             return True
+        
         except:
             print('Failed to insert row into DB.')
             return False
@@ -47,11 +48,8 @@ def calc_daily_balance():
     conn = sqlite3.connect('fbar.db')
 
     df = pd.read_sql_query("SELECT * FROM TRANSACTIONS ORDER BY BOOKING_DATE;", conn)
-    df['BALANCE'] = df['AMOUNT']
-    df.loc[0, 'BALANCE'] = 100000
-    df.loc[7, 'BALANCE'] = 173506
+    df['BALANCE'] = df['BALANCE'].combine_first(df['AMOUNT'])
     df['BALANCE'] = df['BALANCE'].cumsum()
-    print(df)
     df.to_sql('BALANCE', conn, if_exists="append")
 
 
