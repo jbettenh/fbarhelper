@@ -14,7 +14,8 @@ def main():
         2: 'Enter a balance.',
         3: 'Show max credit.',
         4: 'Show max debit.',
-        5: 'Exit',
+        5: 'Show max balance.',
+        6: 'Exit',
     }
     while True:
         print('\n')
@@ -38,6 +39,8 @@ def main():
         elif selection == 4:
             output = calc.get_max_debit()
         elif selection == 5:
+            output = calc.get_max_balance()
+        elif selection == 6:
             print('Bye!!')
             exit()
         else:
